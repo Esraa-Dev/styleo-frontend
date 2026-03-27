@@ -1,0 +1,130 @@
+<div class="p-6">
+  <h1 class="text-3xl font-bold mb-6">Manage Pages</h1>
+  
+  <div *ngIf="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+    {{ successMessage }}
+  </div>
+  
+  <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    {{ errorMessage }}
+  </div>
+  
+  <div class="border-b mb-6">
+    <div class="flex gap-4">
+      <button (click)="activeTab = 'about'" 
+              class="px-4 py-2 font-medium"
+              [class.border-b-2]="activeTab === 'about'"
+              [class.border-primary-600]="activeTab === 'about'"
+              [class.text-primary-600]="activeTab === 'about'">
+        About Us
+      </button>
+      <button (click)="activeTab = 'faq'" 
+              class="px-4 py-2 font-medium"
+              [class.border-b-2]="activeTab === 'faq'"
+              [class.border-primary-600]="activeTab === 'faq'"
+              [class.text-primary-600]="activeTab === 'faq'">
+        FAQ
+      </button>
+      <button (click)="activeTab = 'contact'" 
+              class="px-4 py-2 font-medium"
+              [class.border-b-2]="activeTab === 'contact'"
+              [class.border-primary-600]="activeTab === 'contact'"
+              [class.text-primary-600]="activeTab === 'contact'">
+        Contact Us
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+  </div>
+  
+  <div *ngIf="!isLoading && activeTab === 'about'" class="bg-white rounded-lg shadow p-6">
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-2">Title</label>
+        <input type="text" [(ngModel)]="aboutContent.title" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Introduction</label>
+        <textarea [(ngModel)]="aboutContent.intro" rows="3" class="w-full border rounded-lg px-3 py-2"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Story</label>
+        <textarea [(ngModel)]="aboutContent.story" rows="5" class="w-full border rounded-lg px-3 py-2"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Highlights (one per line)</label>
+        <textarea [(ngModel)]="aboutContent.highlights" rows="3" class="w-full border rounded-lg px-3 py-2" 
+                  placeholder="Enter each highlight on a new line"></textarea>
+      </div>
+      <button (click)="saveAbout()" [disabled]="isSaving" 
+              class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+        {{ isSaving ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="!isLoading && activeTab === 'faq'" class="bg-white rounded-lg shadow p-6">
+    <div class="mb-4">
+      <button (click)="addFaqItem()" class="bg-primary-600 text-white px-4 py-2 rounded-lg">+ Add FAQ</button>
+    </div>
+    <div class="space-y-4">
+      <div *ngFor="let item of faqItems; let i = index" class="border rounded-lg p-4">
+        <div class="flex justify-between mb-2">
+          <h4 class="font-semibold">FAQ #{{ i + 1 }}</h4>
+          <button (click)="removeFaqItem(i)" class="text-red-500 hover:text-red-700">Remove</button>
+        </div>
+        <div class="mb-2">
+          <input type="text" [(ngModel)]="item.question" placeholder="Question" class="w-full border rounded-lg px-3 py-2">
+        </div>
+        <div>
+          <textarea [(ngModel)]="item.answer" placeholder="Answer" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea>
+        </div>
+      </div>
+      <div *ngIf="faqItems.length === 0" class="text-center py-8 text-gray-500">
+        No FAQs added. Click "Add FAQ" to create one.
+      </div>
+      <button *ngIf="faqItems.length > 0" (click)="saveFaq()" [disabled]="isSaving" 
+              class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+        {{ isSaving ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="!isLoading && activeTab === 'contact'" class="bg-white rounded-lg shadow p-6">
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-2">Phone</label>
+        <input type="text" [(ngModel)]="contactContent.phone" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Email</label>
+        <input type="email" [(ngModel)]="contactContent.email" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Address</label>
+        <textarea [(ngModel)]="contactContent.address" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Working Hours</label>
+        <input type="text" [(ngModel)]="contactContent.hours" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <label class="block text-sm font-medium">Social Links</label>
+          <button (click)="addSocialLink()" class="text-primary-600 hover:underline text-sm">+ Add Link</button>
+        </div>
+        <div *ngFor="let link of contactContent.social; let i = index" class="flex gap-2 mb-2">
+          <input type="text" [(ngModel)]="link.label" placeholder="Label (e.g., Facebook)" class="flex-1 border rounded-lg px-3 py-2">
+          <input type="text" [(ngModel)]="link.url" placeholder="URL" class="flex-1 border rounded-lg px-3 py-2">
+          <button (click)="removeSocialLink(i)" class="text-red-500 hover:text-red-700">✕</button>
+        </div>
+      </div>
+      <button (click)="saveContact()" [disabled]="isSaving" 
+              class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+        {{ isSaving ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="p-6">
+  <h1 class="text-3xl font-bold mb-6">Reviews</h1>
+  
+  <div class="bg-white rounded-lg shadow mb-6 p-4">
+    <div class="flex gap-4 items-end">
+      <div class="flex-1">
+        <label class="block text-sm font-medium mb-2">Filter by Status</label>
+        <select [(ngModel)]="statusFilter" class="w-full border rounded-lg px-3 py-2">
+          <option value="">All</option>
+          <option *ngFor="let status of statusOptions" [value]="status">{{ status | titlecase }}</option>
+        </select>
+      </div>
+      <button (click)="filterByStatus()" class="bg-primary-600 text-white px-4 py-2 rounded-lg">Apply</button>
+      <button (click)="resetFilter()" class="border px-4 py-2 rounded-lg">Reset</button>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+  </div>
+  
+  <div *ngIf="!isLoading && reviews.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+    <p class="text-gray-500">No reviews found.</p>
+  </div>
+  
+  <div *ngIf="reviews.length > 0" class="space-y-4">
+    <div *ngFor="let review of reviews" class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+              {{ review.userName.charAt(0) }}
+            </div>
+            <div>
+              <p class="font-semibold">{{ review.userName }}</p>
+              <p class="text-sm text-gray-500">{{ review.createdAt | date }}</p>
+            </div>
+          </div>
+          <div class="flex text-yellow-400">
+            <span *ngFor="let star of getStarArray(review.rating)">★</span>
+            <span *ngFor="let star of getStarArray(5 - review.rating)" class="text-gray-300">★</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="inline-block px-2 py-1 rounded-full text-xs font-semibold"
+                [class.bg-yellow-100]="review.status === 'pending'"
+                [class.bg-green-100]="review.status === 'approved'"
+                [class.bg-red-100]="review.status === 'rejected'"
+                [class.bg-gray-100]="review.status === 'ignored'">
+            {{ review.status }}
+          </span>
+        </div>
+      </div>
+      <p class="text-gray-600 mb-4">{{ review.comment }}</p>
+      <div class="flex gap-2">
+        <button *ngIf="review.status !== 'approved'" 
+                (click)="updateStatus(review, 'approved')" 
+                class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">
+          Approve
+        </button>
+        <button *ngIf="review.status !== 'rejected'" 
+                (click)="updateStatus(review, 'rejected')" 
+                class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">
+          Reject
+        </button>
+        <button *ngIf="review.status !== 'ignored'" 
+                (click)="updateStatus(review, 'ignored')" 
+                class="px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600">
+          Ignore
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="totalPages > 1" class="flex justify-center gap-2 mt-6">
+    <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
+            class="px-3 py-1 border rounded-lg disabled:opacity-50">Previous</button>
+    <span class="px-3 py-1">{{ currentPage }} / {{ totalPages }}</span>
+    <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages"
+            class="px-3 py-1 border rounded-lg disabled:opacity-50">Next</button>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+  <a [routerLink]="['/products', product.slug]">
+    <img [src]="getImageUrl()" [alt]="product.name" class="w-full h-64 object-cover">
+  </a>
+  
+  <div class="p-4">
+    <a [routerLink]="['/products', product.slug]" class="block">
+      <h3 class="font-semibold text-lg mb-2 hover:text-primary-600">{{ product.name }}</h3>
+    </a>
+    
+    <div class="flex items-center justify-between mb-4">
+      <span class="text-xl font-bold text-primary-600">{{ product.price | currency }}</span>
+      <span class="text-sm text-gray-500">Stock: {{ product.stockCount }}</span>
+    </div>
+    
+    <button (click)="addToCart()" 
+            [disabled]="product.stockCount === 0"
+            class="w-full bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+      {{ product.stockCount === 0 ? 'Out of Stock' : 'Add to Cart' }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+  <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+    <h1 class="text-3xl font-bold text-center mb-8">Create Account</h1>
+    
+    <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ errorMessage }}
+    </div>
+    
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Full Name *</label>
+        <input type="text" formControlName="fullName" class="w-full border rounded-lg px-3 py-2">
+        <div *ngIf="form.get('fullName')?.invalid && form.get('fullName')?.touched" class="text-red-500 text-sm mt-1">
+          Name must be at least 2 characters
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Email *</label>
+        <input type="email" formControlName="email" class="w-full border rounded-lg px-3 py-2">
+        <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-red-500 text-sm mt-1">
+          Valid email required
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Phone *</label>
+        <input type="tel" formControlName="phone" class="w-full border rounded-lg px-3 py-2">
+        <div *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched" class="text-red-500 text-sm mt-1">
+          Valid Egyptian phone number required (e.g., 01012345678)
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Password *</label>
+        <div class="relative">
+          <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="w-full border rounded-lg px-3 py-2">
+          <button type="button" (click)="showPassword = !showPassword" class="absolute right-3 top-2 text-gray-500">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-red-500 text-sm mt-1">
+          Password must be at least 8 characters with uppercase, lowercase and number
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Gender *</label>
+        <div class="flex gap-4">
+          <label class="flex items-center">
+            <input type="radio" formControlName="gender" value="male" class="mr-2"> Male
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="gender" value="female" class="mr-2"> Female
+          </label>
+        </div>
+        <div *ngIf="form.get('gender')?.invalid && form.get('gender')?.touched" class="text-red-500 text-sm mt-1">
+          Please select gender
+        </div>
+      </div>
+      
+      <div class="mb-6">
+        <label class="block text-sm font-medium mb-2">Address</label>
+        <textarea formControlName="address" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea>
+      </div>
+      
+      <button type="submit" [disabled]="isLoading" class="w-full bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700 transition disabled:bg-gray-400">
+        {{ isLoading ? 'Creating Account...' : 'Register' }}
+      </button>
+    </form>
+    
+    <p class="text-center text-gray-600 mt-6">
+      Already have an account? 
+      <a routerLink="/login" class="text-primary-600 hover:underline">Login</a>
+    </p>
+  </div>
+</div>

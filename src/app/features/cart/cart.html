@@ -1,0 +1,88 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8">Shopping Cart</h1>
+  
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+  </div>
+  
+  <div *ngIf="!isLoading && (!cart || cart.items.length === 0)" class="text-center py-12">
+    <p class="text-gray-500 mb-4">Your cart is empty.</p>
+    <a routerLink="/products" class="inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+      Continue Shopping
+    </a>
+  </div>
+  
+  <div *ngIf="cart && cart.items.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div *ngFor="let item of cart.items" class="border-b p-4">
+          <div class="flex gap-4">
+            <img [src]="getImageUrl(item.product.image)" [alt]="item.product.name" class="w-24 h-24 object-cover rounded">
+            
+            <div class="flex-1">
+              <h3 class="font-semibold mb-2">{{ item.product.name }}</h3>
+              <p class="text-gray-600 mb-2">{{ item.product.price | currency }}</p>
+              
+              <div class="flex items-center gap-4">
+                <div class="flex border rounded">
+                  <button (click)="updateQuantity(item, item.quantity - 1)" class="px-2 py-1 hover:bg-gray-100">-</button>
+                  <span class="px-3 py-1">{{ item.quantity }}</span>
+                  <button (click)="updateQuantity(item, item.quantity + 1)" class="px-2 py-1 hover:bg-gray-100">+</button>
+                </div>
+                
+                <button (click)="removeItem(item.product._id)" class="text-red-500 hover:text-red-700">
+                  Remove
+                </button>
+                
+                <button *ngIf="item.priceChanged" (click)="confirmPrice(item.product._id)" class="text-yellow-600 hover:text-yellow-700 text-sm">
+                  Update Price
+                </button>
+              </div>
+              
+              <p *ngIf="item.priceChanged" class="text-yellow-600 text-sm mt-2">
+                Price changed from {{ item.priceAtAdd | currency }} to {{ item.currentPrice | currency }}
+              </p>
+            </div>
+            
+            <div class="text-right">
+              <p class="font-semibold">{{ item.subtotal | currency }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="cart.hasPriceChanges" class="mt-4 text-right">
+        <button (click)="confirmPrice('all')" class="text-primary-600 hover:underline">
+          Accept All Price Changes
+        </button>
+      </div>
+    </div>
+    
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow p-6 sticky top-20">
+        <h3 class="text-xl font-bold mb-4">Order Summary</h3>
+        
+        <div class="space-y-2 mb-4">
+          <div class="flex justify-between">
+            <span>Subtotal</span>
+            <span>{{ cart.subtotal | currency }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Shipping</span>
+            <span>{{ cart.shippingFee | currency }}</span>
+          </div>
+          <div class="border-t pt-2 mt-2">
+            <div class="flex justify-between font-bold">
+              <span>Total</span>
+              <span>{{ cart.total | currency }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <a routerLink="/checkout" class="block w-full bg-primary-600 text-white text-center py-3 rounded-lg hover:bg-primary-700 transition">
+          Proceed to Checkout
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

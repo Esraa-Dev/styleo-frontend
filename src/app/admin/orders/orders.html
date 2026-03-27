@@ -1,0 +1,91 @@
+<div class="p-6">
+  <h1 class="text-3xl font-bold mb-6">Orders</h1>
+  
+  <div class="bg-white rounded-lg shadow mb-6 p-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-2">Status</label>
+        <select [(ngModel)]="filters.status" class="w-full border rounded-lg px-3 py-2">
+          <option value="">All</option>
+          <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Order #</label>
+        <input type="text" [(ngModel)]="filters.search" placeholder="Search by order number" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">From Date</label>
+        <input type="date" [(ngModel)]="filters.dateFrom" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">To Date</label>
+        <input type="date" [(ngModel)]="filters.dateTo" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div class="flex items-end gap-2">
+        <button (click)="applyFilters()" class="bg-primary-600 text-white px-4 py-2 rounded-lg">Apply</button>
+        <button (click)="resetFilters()" class="border px-4 py-2 rounded-lg">Reset</button>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+  </div>
+  
+  <div *ngIf="!isLoading && orders.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+    <p class="text-gray-500">No orders found.</p>
+  </div>
+  
+  <div *ngIf="orders.length > 0" class="space-y-4">
+    <div *ngFor="let order of orders" class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="border-b p-4 flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <span class="font-bold">#{{ order.orderNumber }}</span>
+          <span class="text-gray-500 text-sm ml-4">{{ order.createdAt | date }}</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="px-2 py-1 rounded-full text-xs font-semibold" [class]="getStatusClass(order.status)">
+            {{ order.status }}
+          </span>
+          <a [routerLink]="['/admin/orders', order._id]" class="text-primary-600 hover:underline">View Details</a>
+          <select *ngIf="canUpdateStatus(order.status).length" 
+                  (change)="updateStatus(order, $any($event.target).value)"
+                  class="border rounded px-2 py-1 text-sm">
+            <option value="">Update Status</option>
+            <option *ngFor="let status of canUpdateStatus(order.status)" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-sm text-gray-500">Customer</p>
+            <p class="font-medium">{{ (order.user as any).fullName || order.user }}</p>
+            <p class="text-sm">{{ order.deliveryPhone }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Address</p>
+            <p class="text-sm">{{ order.deliveryAddress }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Items</p>
+            <p class="text-sm">{{ order.items.length }} item(s)</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total</p>
+            <p class="font-bold">{{ order.totalAmount | currency }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="totalPages > 1" class="flex justify-center gap-2 mt-6">
+    <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
+            class="px-3 py-1 border rounded-lg disabled:opacity-50">Previous</button>
+    <span class="px-3 py-1">{{ currentPage }} / {{ totalPages }}</span>
+    <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages"
+            class="px-3 py-1 border rounded-lg disabled:opacity-50">Next</button>
+  </div>
+</div>

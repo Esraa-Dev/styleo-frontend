@@ -1,0 +1,78 @@
+<div *ngIf="isLoading" class="text-center py-12">
+  <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+</div>
+
+<div *ngIf="!isLoading && product" class="container mx-auto px-4 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    <div>
+      <img [src]="selectedImage" [alt]="product.name" class="w-full rounded-lg shadow-lg">
+    </div>
+    
+    <div>
+      <h1 class="text-3xl font-bold mb-4">{{ product.name }}</h1>
+      
+      <div class="flex items-center mb-4">
+        <div class="flex text-yellow-400">
+          <span *ngFor="let star of getStarArray(getAverageRating())">★</span>
+          <span *ngFor="let star of getStarArray(5 - getAverageRating())" class="text-gray-300">★</span>
+        </div>
+        <span class="ml-2 text-gray-600">({{ reviews.length }} reviews)</span>
+      </div>
+      
+      <p class="text-3xl font-bold text-primary-600 mb-4">{{ product.price | currency }}</p>
+      
+      <p class="text-gray-600 mb-6">{{ product.description }}</p>
+      
+      <div class="mb-6">
+        <span class="font-semibold">Category: </span>
+        <a [routerLink]="['/products']" [queryParams]="{category: product.category._id}" class="text-primary-600 hover:underline">
+          {{ product.category.name }}
+        </a>
+        <span *ngIf="product.subcategory"> | </span>
+        <a *ngIf="product.subcategory" [routerLink]="['/products']" [queryParams]="{subcategory: product.subcategory._id}" class="text-primary-600 hover:underline">
+          {{ product.subcategory.name }}
+        </a>
+      </div>
+      
+      <div class="mb-6">
+        <span class="font-semibold">Availability: </span>
+        <span [class.text-green-600]="product.stockCount > 0" [class.text-red-600]="product.stockCount === 0">
+          {{ product.stockCount > 0 ? 'In Stock' : 'Out of Stock' }}
+        </span>
+        <span *ngIf="product.stockCount > 0" class="text-gray-600">({{ product.stockCount }} left)</span>
+      </div>
+      
+      <div class="flex gap-4 mb-8">
+        <div class="flex border rounded-lg">
+          <button (click)="quantity = Math.max(1, quantity - 1)" class="px-3 py-2 hover:bg-gray-100">-</button>
+          <input type="number" [(ngModel)]="quantity" min="1" [max]="product.stockCount" class="w-16 text-center border-x">
+          <button (click)="quantity = Math.min(product.stockCount, quantity + 1)" class="px-3 py-2 hover:bg-gray-100">+</button>
+        </div>
+        
+        <button (click)="addToCart()" [disabled]="product.stockCount === 0"
+                class="flex-1 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition disabled:bg-gray-400">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="mt-12">
+    <h3 class="text-2xl font-bold mb-6">Customer Reviews</h3>
+    
+    <div *ngIf="reviews.length === 0" class="text-center py-8 text-gray-500">
+      No reviews yet.
+    </div>
+    
+    <div *ngFor="let review of reviews" class="border-b pb-6 mb-6">
+      <div class="flex items-center mb-2">
+        <div class="flex text-yellow-400">
+          <span *ngFor="let star of getStarArray(review.rating)">★</span>
+          <span *ngFor="let star of getStarArray(5 - review.rating)" class="text-gray-300">★</span>
+        </div>
+        <span class="ml-2 font-semibold">{{ review.userName }}</span>
+      </div>
+      <p class="text-gray-600">{{ review.reviewText }}</p>
+    </div>
+  </div>
+</div>

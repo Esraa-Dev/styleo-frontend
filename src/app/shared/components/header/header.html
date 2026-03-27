@@ -1,0 +1,56 @@
+<header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+  <nav class="container mx-auto px-4 py-3">
+    <div class="flex items-center justify-between">
+      <a routerLink="/" class="text-2xl font-bold text-primary-600">Stylo</a>
+      
+      <div class="hidden md:flex items-center space-x-6">
+        <a routerLink="/" routerLinkActive="text-primary-600" class="hover:text-primary-600 transition">Home</a>
+        <a routerLink="/products" routerLinkActive="text-primary-600" class="hover:text-primary-600 transition">Products</a>
+        <a routerLink="/about" routerLinkActive="text-primary-600" class="hover:text-primary-600 transition">About</a>
+        <a routerLink="/contact" routerLinkActive="text-primary-600" class="hover:text-primary-600 transition">Contact</a>
+        <a routerLink="/testimonials" routerLinkActive="text-primary-600" class="hover:text-primary-600 transition">Reviews</a>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <app-cart-icon />
+        
+        <ng-container *ngIf="user$ | async as user; else guest">
+          <div class="relative">
+            <button (click)="toggleMenu()" class="flex items-center space-x-2 hover:text-primary-600">
+              <span>{{ user.fullName.split(' ')[0] }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            
+            <div *ngIf="isMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+              <a routerLink="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+              <a routerLink="/orders" class="block px-4 py-2 hover:bg-gray-100">Orders</a>
+              <a *ngIf="user.role === 'admin'" routerLink="/admin" class="block px-4 py-2 hover:bg-gray-100">Admin</a>
+              <button (click)="logout()" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+            </div>
+          </div>
+        </ng-container>
+        
+        <ng-template #guest>
+          <a routerLink="/login" class="hover:text-primary-600 transition">Login</a>
+          <a routerLink="/register" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition">Sign Up</a>
+        </ng-template>
+      </div>
+      
+      <button (click)="toggleMenu()" class="md:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <div *ngIf="isMenuOpen" class="md:hidden mt-4 pb-2">
+      <a routerLink="/" class="block py-2 hover:text-primary-600">Home</a>
+      <a routerLink="/products" class="block py-2 hover:text-primary-600">Products</a>
+      <a routerLink="/about" class="block py-2 hover:text-primary-600">About</a>
+      <a routerLink="/contact" class="block py-2 hover:text-primary-600">Contact</a>
+      <a routerLink="/testimonials" class="block py-2 hover:text-primary-600">Reviews</a>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,72 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8">Checkout</h1>
+  
+  <div *ngIf="!cart || cart.items.length === 0" class="text-center py-12">
+    <p class="text-gray-500 mb-4">Your cart is empty.</p>
+    <a routerLink="/products" class="inline-block bg-primary-600 text-white px-6 py-2 rounded-lg">Continue Shopping</a>
+  </div>
+  
+  <div *ngIf="cart && cart.items.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4">Delivery Information</h2>
+        
+        <form [formGroup]="form">
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Phone Number *</label>
+            <input type="tel" formControlName="deliveryPhone" class="w-full border rounded-lg px-3 py-2">
+            <div *ngIf="form.get('deliveryPhone')?.invalid && form.get('deliveryPhone')?.touched" class="text-red-500 text-sm mt-1">
+              Valid Egyptian phone number required
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Delivery Address *</label>
+            <textarea formControlName="deliveryAddress" rows="3" class="w-full border rounded-lg px-3 py-2"></textarea>
+            <div *ngIf="form.get('deliveryAddress')?.invalid && form.get('deliveryAddress')?.touched" class="text-red-500 text-sm mt-1">
+              Address is required
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <div>
+      <div class="bg-white rounded-lg shadow p-6 sticky top-20">
+        <h2 class="text-xl font-bold mb-4">Order Summary</h2>
+        
+        <div class="max-h-64 overflow-y-auto mb-4">
+          <div *ngFor="let item of cart.items" class="flex justify-between mb-2 text-sm">
+            <span>{{ item.product.name }} x {{ item.quantity }}</span>
+            <span>{{ item.subtotal | currency }}</span>
+          </div>
+        </div>
+        
+        <div class="border-t pt-4 space-y-2">
+          <div class="flex justify-between">
+            <span>Subtotal</span>
+            <span>{{ cart.subtotal | currency }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Shipping</span>
+            <span>{{ cart.shippingFee | currency }}</span>
+          </div>
+          <div class="border-t pt-2 mt-2">
+            <div class="flex justify-between font-bold">
+              <span>Total</span>
+              <span>{{ cart.total | currency }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6">
+          <p class="text-sm text-gray-600 mb-4">Payment Method: Cash on Delivery</p>
+          <button (click)="submit()" [disabled]="isSubmitting" 
+                  class="w-full bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition disabled:bg-gray-400">
+            {{ isSubmitting ? 'Processing...' : 'Place Order' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
